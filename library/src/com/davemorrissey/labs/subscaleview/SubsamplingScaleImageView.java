@@ -255,6 +255,11 @@ public class SubsamplingScaleImageView extends View {
     private RectF sRect;
     private float[] srcArray = new float[8];
     private float[] dstArray = new float[8];
+    private DoubleClickListenner mDoubleCkickListenner;
+
+    public void setOnDoubleClickListenner(DoubleClickListenner doubleClickListenner){
+        mDoubleCkickListenner = doubleClickListenner;
+    }
 
     public SubsamplingScaleImageView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -508,31 +513,36 @@ public class SubsamplingScaleImageView extends View {
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if (zoomEnabled && readySent && vTranslate != null) {
-                    // Hacky solution for #15 - after a double tap the GestureDetector gets in a state
-                    // where the next fling is ignored, so here we replace it with a new one.
-                    setGestureDetector(context);
-                    if (quickScaleEnabled) {
-                        // Store quick scale params. This will become either a double tap zoom or a
-                        // quick scale depending on whether the user swipes.
-                        vCenterStart = new PointF(e.getX(), e.getY());
-                        vTranslateStart = new PointF(vTranslate.x, vTranslate.y);
-                        scaleStart = scale;
-                        isQuickScaling = true;
-                        isZooming = true;
-                        quickScaleCenter = viewToSourceCoord(vCenterStart);
-                        quickScaleLastDistance = -1F;
-                        quickScaleLastPoint = new PointF(quickScaleCenter.x, quickScaleCenter.y);
-                        quickScaleMoved = false;
-                        // We need to get events in onTouchEvent after this.
-                        return false;
-                    } else {
-                        // Start double tap zoom animation.
-                        doubleTapZoom(viewToSourceCoord(new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY()));
-                        return true;
+                if(mDoubleCkickListenner == null) {
+                    if (zoomEnabled && readySent && vTranslate != null) {
+                        // Hacky solution for #15 - after a double tap the GestureDetector gets in a state
+                        // where the next fling is ignored, so here we replace it with a new one.
+                        setGestureDetector(context);
+                        if (quickScaleEnabled) {
+                            // Store quick scale params. This will become either a double tap zoom or a
+                            // quick scale depending on whether the user swipes.
+                            vCenterStart = new PointF(e.getX(), e.getY());
+                            vTranslateStart = new PointF(vTranslate.x, vTranslate.y);
+                            scaleStart = scale;
+                            isQuickScaling = true;
+                            isZooming = true;
+                            quickScaleCenter = viewToSourceCoord(vCenterStart);
+                            quickScaleLastDistance = -1F;
+                            quickScaleLastPoint = new PointF(quickScaleCenter.x, quickScaleCenter.y);
+                            quickScaleMoved = false;
+                            // We need to get events in onTouchEvent after this.
+                            return false;
+                        } else {
+                            // Start double tap zoom animation.
+                            doubleTapZoom(viewToSourceCoord(new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY()));
+                            return true;
+                        }
                     }
+                    return super.onDoubleTapEvent(e);
+                }else{
+                    mDoubleCkickListenner.onDoubleClick();
+                    return true;
                 }
-                return super.onDoubleTapEvent(e);
             }
         });
     }
