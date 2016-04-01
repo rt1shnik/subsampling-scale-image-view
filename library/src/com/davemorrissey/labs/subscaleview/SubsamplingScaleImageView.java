@@ -361,6 +361,11 @@ public class SubsamplingScaleImageView extends View {
         setImage(imageSource, previewSource, null);
     }
 
+
+    private BitmapLoadTask previewBitmapLoadTask;
+    private TilesInitTask tilesInitTask;
+    private BitmapLoadTask singleImageLoader;
+
     /**
      * Set the image source from a bitmap, resource, asset, file or other URI, providing a preview image to be
      * displayed until the full size image is loaded, starting with a given orientation setting, scale and center.
@@ -400,8 +405,12 @@ public class SubsamplingScaleImageView extends View {
                 if (uri == null && previewSource.getResource() != null) {
                     uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getContext().getPackageName() + "/" + previewSource.getResource());
                 }
-                BitmapLoadTask task = new BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri, true);
-                execute(task);
+
+                if(previewBitmapLoadTask != null && previewBitmapLoadTask.getStatus() == AsyncTask.Status.RUNNING){
+                    previewBitmapLoadTask.cancel(true);
+                }
+                previewBitmapLoadTask = new BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri, true);
+                execute(previewBitmapLoadTask);
             }
         }
 
@@ -417,12 +426,18 @@ public class SubsamplingScaleImageView extends View {
             }
             if (imageSource.getTile() || sRegion != null) {
                 // Load the bitmap using tile decoding.
-                TilesInitTask task = new TilesInitTask(this, getContext(), regionDecoderFactory, uri);
-                execute(task);
+                if(tilesInitTask != null && tilesInitTask.getStatus() == AsyncTask.Status.RUNNING){
+                    tilesInitTask.cancel(true);
+                }
+                tilesInitTask = new TilesInitTask(this, getContext(), regionDecoderFactory, uri);
+                execute(tilesInitTask);
             } else {
                 // Load the bitmap as a single image.
-                BitmapLoadTask task = new BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri, false);
-                execute(task);
+                if(singleImageLoader != null && singleImageLoader.getStatus() == AsyncTask.Status.RUNNING){
+                    singleImageLoader.cancel(true);
+                }
+                singleImageLoader = new BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri, false);
+                execute(singleImageLoader);
             }
         }
     }
