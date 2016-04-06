@@ -1470,17 +1470,17 @@ public class SubsamplingScaleImageView extends View {
      */
     private synchronized void onTilesInited(ImageRegionDecoder decoder, int sWidth, int sHeight, int sOrientation) {
         // If actual dimensions don't match the declared size, reset everything.
-        if (this.sWidth > 0 && this.sHeight > 0 && (this.sWidth != sWidth || this.sHeight != sHeight)) {
-            reset(false);
-            if (bitmap != null) {
-                if (!bitmapIsCached) {
-                    bitmap.recycle();
-                }
-                bitmap = null;
-                bitmapIsPreview = false;
-                bitmapIsCached = false;
-            }
-        }
+//        if (this.sWidth > 0 && this.sHeight > 0 && (this.sWidth != sWidth || this.sHeight != sHeight)) {
+//            reset(false);
+//            if (bitmap != null) {
+//                if (!bitmapIsCached) {
+//                    bitmap.recycle();
+//                }
+//                bitmap = null;
+//                bitmapIsPreview = false;
+//                bitmapIsCached = false;
+//            }
+//        }
         this.decoder = decoder;
         this.sWidth = sWidth;
         this.sHeight = sHeight;
@@ -1649,9 +1649,9 @@ public class SubsamplingScaleImageView extends View {
      */
     private synchronized void onImageLoaded(Bitmap bitmap, int sOrientation, boolean bitmapIsCached) {
         // If actual dimensions don't match the declared size, reset everything.
-        if (this.sWidth > 0 && this.sHeight > 0 && (this.sWidth != bitmap.getWidth() || this.sHeight != bitmap.getHeight())) {
-            reset(false);
-        }
+//        if (this.sWidth > 0 && this.sHeight > 0 && (this.sWidth != bitmap.getWidth() || this.sHeight != bitmap.getHeight())) {
+//            reset(false);
+//        }
         if (this.bitmap != null && !this.bitmapIsCached) {
             this.bitmap.recycle();
         }
