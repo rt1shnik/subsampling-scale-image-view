@@ -230,4 +230,12 @@ public final class ImageSource {
     protected final boolean isCached() {
         return cached;
     }
+
+    public int getsWidth() {
+        return sWidth;
+    }
+
+    public int getsHeight() {
+        return sHeight;
+    }
 }
