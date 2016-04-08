@@ -2788,4 +2788,7 @@ public class SubsamplingScaleImageView extends View {
 
     }
 
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
 }
